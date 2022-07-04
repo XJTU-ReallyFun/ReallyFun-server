@@ -20,7 +20,7 @@ public class ExampleServiceImpl implements IExampleService {
         Example example = new Example();
         example.setEint(eint);
         example.setEstr(estr);
-        example.createBy("username");
+        example.createBy(-1);
         Integer result = exampleMapper.insert(example);
         if (result != 1) {
             throw new ExampleException("示例插入失败");

@@ -15,7 +15,7 @@ public class ResponseResult<E> implements Serializable {
     /**
      * 状态码
      */
-    private Integer state;
+    private Integer code;
     /**
      * 状态描述信息
      */
@@ -28,23 +28,23 @@ public class ResponseResult<E> implements Serializable {
     public ResponseResult() {
     }
 
-    public ResponseResult(Integer state, String message) {
-        this.state = state;
+    public ResponseResult(Integer code, String message) {
+        this.code = code;
         this.message = message;
     }
 
-    public ResponseResult(Integer state, String message, E data) {
-        this.state = state;
+    public ResponseResult(Integer code, String message, E data) {
+        this.code = code;
         this.message = message;
         this.data = data;
     }
 
-    public Integer getState() {
-        return state;
+    public Integer getCode() {
+        return code;
     }
 
-    public void setState(Integer state) {
-        this.state = state;
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public String getMessage() {
@@ -67,8 +67,8 @@ public class ResponseResult<E> implements Serializable {
         return new ResponseResult<>(OK, null, null);
     }
 
-    public static <E> ResponseResult<E> getResponseResult(Integer state) {
-        return new ResponseResult<>(state, null, null);
+    public static <E> ResponseResult<E> getResponseResult(Integer code) {
+        return new ResponseResult<>(code, null, null);
     }
 
     public static <E> ResponseResult<E> getResponseResult(String message) {
@@ -79,9 +79,9 @@ public class ResponseResult<E> implements Serializable {
         return new ResponseResult<>(OK, null, data);
     }
 
-    public static <E> ResponseResult<E> getResponseResult(Integer state, String
+    public static <E> ResponseResult<E> getResponseResult(Integer code, String
             message) {
-        return new ResponseResult<>(state, message, null);
+        return new ResponseResult<>(code, message, null);
     }
 
     public static <E> ResponseResult<E> getResponseResult(String message, E data) {

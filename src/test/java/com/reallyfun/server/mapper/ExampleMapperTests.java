@@ -18,13 +18,14 @@ public class ExampleMapperTests {
         Example example = new Example();
         example.setEint(2333);
         example.setEstr("haha");
-        example.createBy("username");
+        example.createBy(-1);
         Integer rows = exampleMapper.insert(example);
+        System.out.println("rows=" + rows);
 
         Example example2 = new Example();
         example2.setEint(666);
         example2.setEstr("hehe");
-        example2.createBy("another_user");
+        example2.createBy(-1);
         rows = exampleMapper.insert(example2);
         System.out.println("rows=" + rows);
     }
@@ -39,7 +40,7 @@ public class ExampleMapperTests {
     public void updateEstrByEid() {
         Example example = new Example();
         example.setEid(2);
-        example.modifiedBy("user0");
+        example.modifiedBy(-1);
         Integer rows = exampleMapper.updateEstrByEid(example, "user233");
         System.out.println("rows=" + rows);
     }

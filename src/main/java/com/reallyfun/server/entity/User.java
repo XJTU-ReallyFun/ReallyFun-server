@@ -4,6 +4,7 @@ public class User extends BaseEntity {
     private Integer id;
     private String name;
     private String password;
+    private String salt;
     private String email;
     private String avatar;
     private Integer auth;
@@ -30,6 +31,14 @@ public class User extends BaseEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public String getEmail() {
