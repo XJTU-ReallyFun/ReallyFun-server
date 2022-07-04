@@ -1,5 +1,6 @@
 package com.reallyfun.server.controller;
 
+import com.reallyfun.server.entity.User;
 import com.reallyfun.server.service.ex.*;
 import com.reallyfun.server.util.ResponseResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,7 +19,7 @@ public class BaseController {
      */
     @ExceptionHandler(ServiceException.class)
     public ResponseResult<Void> handleException(Throwable e) {
-        ResponseResult responseResult = null;
+        ResponseResult responseResult;
         if (e instanceof ExampleException) {
             responseResult = ResponseResult.getResponseResult(4000, "示例错误");
         } else if (e instanceof UserException) {
@@ -30,22 +31,22 @@ public class BaseController {
     }
 
     /**
-     * 从HttpSession对象中获取uid
+     * 在HttpSession对象中设置当前用户对象
      *
+     * @param user    用户对象
      * @param session HttpSession对象
-     * @return 当前登录的⽤户的id
      */
-    protected final Integer getUidFromSession(HttpSession session) {
-        return Integer.valueOf(session.getAttribute("uid").toString());
+    protected final void setUserIntoSession(User user, HttpSession session) {
+        session.setAttribute("user", user);
     }
 
     /**
-     * 从HttpSession对象中获取⽤户名
+     * 从HttpSession对象中获取当前用户对象
      *
      * @param session HttpSession对象
-     * @return 当前登录的⽤户名
+     * @return 当前登录用户对象，若未登录则返回null
      */
-    protected final String getUsernameFromSession(HttpSession session) {
-        return session.getAttribute("username").toString();
+    protected final User getUserFromSession(HttpSession session) {
+        return (User) session.getAttribute("user");
     }
 }

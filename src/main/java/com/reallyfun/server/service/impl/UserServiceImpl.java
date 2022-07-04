@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
 /**
@@ -52,6 +53,9 @@ public class UserServiceImpl implements IUserService {
         user.setName(name);
         user.setPassword(encryptedPassword);
         user.setSalt(salt);
+        user.setEmail(email);
+        // TODO: 使用配置文件设置默认/随机头像地址
+        user.setAvatar("https://avatar.com/default");
         user.setAuth(0);
         user.createBy(-1);
 
@@ -104,5 +108,42 @@ public class UserServiceImpl implements IUserService {
         byte[] bytes = (password + salt).getBytes();
         String encrypted = DigestUtils.md5DigestAsHex(bytes).toLowerCase();
         return encrypted;
+    }
+
+    /**
+     * 用户登录
+     *
+     * @param name     用户名
+     * @param password 密码明文
+     * @return 若登录成功则返回用户信息，否则抛出错误
+     */
+    @Override
+    public User login(String name, String password) {
+        // 根据用户名查询用户信息
+        User user = userMapper.findUserByName(name);
+        if (user == null) {
+            throw new UserException("用户不存在");
+        }
+
+        // 检查密码进行身份验证
+        if (!verifyPassword(password, user.getPassword(), user.getSalt())) {
+            throw new UserException("密码错误");
+        }
+
+        // 返回用户信息
+        return user;
+    }
+
+    /**
+     * 检查密码明文与盐值是否与MD5值匹配
+     *
+     * @param password 密码明文
+     * @param hash     MD5值
+     * @param salt     盐值
+     * @return 若匹配则返回true
+     */
+    private Boolean verifyPassword(String password, String hash, String salt) {
+        String encrypted = encryptPassword(password, salt);
+        return encrypted.equals(hash);
     }
 }
