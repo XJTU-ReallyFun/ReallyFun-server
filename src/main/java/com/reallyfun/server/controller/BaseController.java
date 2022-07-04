@@ -21,6 +21,10 @@ public class BaseController {
         ResponseResult responseResult = null;
         if (e instanceof ExampleException) {
             responseResult = ResponseResult.getResponseResult(4000, "示例错误");
+        } else if (e instanceof UserException) {
+            responseResult = ResponseResult.getResponseResult(4000, e.getMessage());
+        } else {
+            responseResult = ResponseResult.getResponseResult(1000, "未知错误");
         }
         return responseResult;
     }
