@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.reallyfun.server.mapper.ExampleMapper">
+<mapper namespace="com.reallyfun.server.mapper.IExampleMapper">
     <!-- 插⼊数据：Integer insert(Example example) -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="eid">
         INSERT INTO t_example (eid, eint, estr,

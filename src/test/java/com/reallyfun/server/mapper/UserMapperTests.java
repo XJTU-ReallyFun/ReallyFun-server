@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class UserMapperTests {
     @Autowired(required = false)
-    UserMapper userMapper;
+    IUserMapper userMapper;
 
     @Test
     public void insert() {

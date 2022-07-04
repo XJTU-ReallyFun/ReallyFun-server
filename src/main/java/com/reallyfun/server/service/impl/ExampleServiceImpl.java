@@ -1,7 +1,7 @@
 package com.reallyfun.server.service.impl;
 
 import com.reallyfun.server.entity.Example;
-import com.reallyfun.server.mapper.ExampleMapper;
+import com.reallyfun.server.mapper.IExampleMapper;
 import com.reallyfun.server.service.IExampleService;
 import com.reallyfun.server.service.ex.ExampleException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ExampleServiceImpl implements IExampleService {
     @Autowired(required = false)
-    private ExampleMapper exampleMapper;
+    private IExampleMapper exampleMapper;
 
     @Override
     public void add(int eint, String estr) {
