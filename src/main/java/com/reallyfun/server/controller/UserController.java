@@ -2,7 +2,6 @@ package com.reallyfun.server.controller;
 
 import com.reallyfun.server.entity.User;
 import com.reallyfun.server.service.IUserService;
-import com.reallyfun.server.service.ex.UserException;
 import com.reallyfun.server.util.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +19,7 @@ public class UserController extends BaseController {
     private IUserService userService;
 
     @PostMapping("register")
-    public ResponseResult<Void> register(@RequestBody User user) throws UserException {
+    public ResponseResult<Void> register(@RequestBody User user) {
         userService.register(
                 user.getName(),
                 user.getPassword(),
