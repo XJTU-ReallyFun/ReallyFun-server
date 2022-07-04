@@ -7,16 +7,16 @@ import java.util.Date;
  * 实体类的基类
  */
 public abstract class BaseEntity implements Serializable {
-    private String createdUser;
+    private Integer createdUser;
     private Date createdTime;
-    private String modifiedUser;
+    private Integer modifiedUser;
     private Date modifiedTime;
 
-    public String getCreatedUser() {
+    public Integer getCreatedUser() {
         return createdUser;
     }
 
-    public void setCreatedUser(String createdUser) {
+    public void setCreatedUser(Integer createdUser) {
         this.createdUser = createdUser;
     }
 
@@ -28,11 +28,11 @@ public abstract class BaseEntity implements Serializable {
         this.createdTime = createdTime;
     }
 
-    public String getModifiedUser() {
+    public Integer getModifiedUser() {
         return modifiedUser;
     }
 
-    public void setModifiedUser(String modifiedUser) {
+    public void setModifiedUser(Integer modifiedUser) {
         this.modifiedUser = modifiedUser;
     }
 
@@ -44,18 +44,18 @@ public abstract class BaseEntity implements Serializable {
         this.modifiedTime = modifiedTime;
     }
 
-    public void modifiedBy(String user) {
+    public void modifiedBy(Integer userId) {
         Date now = new Date();
         this.setModifiedTime(now);
-        this.setModifiedUser(user);
+        this.setModifiedUser(userId);
     }
 
-    public void createBy(String user) {
+    public void createBy(Integer userId) {
         Date now = new Date();
         this.setCreatedTime(now);
-        this.setCreatedUser(user);
+        this.setCreatedUser(userId);
         this.setModifiedTime(now);
-        this.setModifiedUser(user);
+        this.setModifiedUser(userId);
     }
 
     @Override
