@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.reallyfun.server.mapper.UserMapper">
+<mapper namespace="com.reallyfun.server.mapper.IUserMapper">
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_user (id, name, password, salt, email, avatar, auth,
                             created_user, created_time, modified_user, modified_time)

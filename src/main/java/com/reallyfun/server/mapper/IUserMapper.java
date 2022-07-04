@@ -5,7 +5,7 @@ import com.reallyfun.server.entity.User;
 /**
  * 处理用户操作的持久层接口
  */
-public interface UserMapper {
+public interface IUserMapper {
     /**
      * 插入用户数据
      *

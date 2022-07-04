@@ -1,12 +1,11 @@
 package com.reallyfun.server.mapper;
 
 import com.reallyfun.server.entity.Example;
-import org.apache.ibatis.annotations.Param;
 
 /**
  * 处理数据操作的持久层接⼝
  */
-public interface ExampleMapper {
+public interface IExampleMapper {
     /**
      * 插入数据
      *

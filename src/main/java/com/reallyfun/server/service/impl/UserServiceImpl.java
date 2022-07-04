@@ -1,7 +1,7 @@
 package com.reallyfun.server.service.impl;
 
 import com.reallyfun.server.entity.User;
-import com.reallyfun.server.mapper.UserMapper;
+import com.reallyfun.server.mapper.IUserMapper;
 import com.reallyfun.server.service.IUserService;
 import com.reallyfun.server.service.ex.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements IUserService {
     @Autowired(required = false)
-    private UserMapper userMapper;
+    private IUserMapper userMapper;
 
     /**
      * 用户注册
