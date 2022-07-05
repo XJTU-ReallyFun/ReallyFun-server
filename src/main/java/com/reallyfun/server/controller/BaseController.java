@@ -2,6 +2,7 @@ package com.reallyfun.server.controller;
 
 import com.reallyfun.server.entity.User;
 import com.reallyfun.server.service.ex.*;
+import com.reallyfun.server.util.FileTool;
 import com.reallyfun.server.util.ResponseResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -23,7 +24,9 @@ public class BaseController {
         if (e instanceof ExampleException) {
             responseResult = ResponseResult.getResponseResult(4000, "示例错误");
         } else if (e instanceof UserException) {
-            responseResult = ResponseResult.getResponseResult(4000, e.getMessage());
+            responseResult = ResponseResult.getResponseResult(4001, e.getMessage());
+        } else if (e instanceof FileToolException) {
+            responseResult = ResponseResult.getResponseResult(4002, e.getMessage());
         } else {
             responseResult = ResponseResult.getResponseResult(1000, "未知错误");
         }

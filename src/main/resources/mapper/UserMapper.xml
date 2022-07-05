@@ -28,6 +28,15 @@
         WHERE name = #{name}
     </select>
 
+    <update id="updateAvatarById">
+        UPDATE
+            t_user
+        SET avatar        = #{avatar},
+            modified_user = #{modifiedUser},
+            modified_time = #{modifiedTime}
+        WHERE id = #{id}
+    </update>
+
 
     <!-- 插⼊数据：Integer insert(Example example) -->
     <!--    <insert id="insert" useGeneratedKeys="true" keyProperty="eid">-->

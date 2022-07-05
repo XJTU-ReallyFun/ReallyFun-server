@@ -37,4 +37,12 @@ public interface IUserMapper {
      * @return 用户实体对象，若无则返回null
      */
     User findUserByName(String name);
+
+    /**
+     * 根据用户ID更改对应用户头像文件名
+     *
+     * @param user 用户对象
+     * @return 受影响的行数
+     */
+    Integer updateAvatarById(User user);
 }
