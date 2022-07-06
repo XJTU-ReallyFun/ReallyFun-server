@@ -26,8 +26,10 @@ public class BaseController {
             responseResult = ResponseResult.getResponseResult(4001, e.getMessage());
         } else if (e instanceof FileToolException) {
             responseResult = ResponseResult.getResponseResult(4002, e.getMessage());
-        }else if(e instanceof  RatingException){
+        } else if (e instanceof RatingException) {
             responseResult = ResponseResult.getResponseResult(4003, e.getMessage());
+        } else if (e instanceof FavoriteException) {
+            responseResult = ResponseResult.getResponseResult(4004, e.getMessage());
         } else {
             responseResult = ResponseResult.getResponseResult(1000, "未知错误");
         }
