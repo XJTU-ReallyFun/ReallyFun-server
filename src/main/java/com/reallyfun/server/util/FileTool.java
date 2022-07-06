@@ -1,6 +1,9 @@
 package com.reallyfun.server.util;
 
 import com.reallyfun.server.service.ex.FileToolException;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.FileHeader;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -78,5 +81,54 @@ public class FileTool {
             throw new FileToolException("文件删除失败");
         }
         return true;
+    }
+
+    /**
+     * 解压缩文件并检查入口文件是否存在
+     *
+     * @param dir           待解压文件所在目录
+     * @param filename      待解压文件名
+     * @param outputDir     解压目录
+     * @param entryFilename 入口文件名
+     */
+    public static void checkEntryFileAndUnzip(
+            String dir,
+            String filename,
+            String outputDir,
+            String entryFilename
+    ) {
+        File file = new File(dir, filename);
+
+        // 若文件不存在则返回
+        if (!file.exists()) {
+            throw new FileToolException("待解压文件不存在");
+        }
+
+        try {
+            ZipFile zipFile = new ZipFile(file);
+
+            // 检查压缩文件是否有效
+            if (!zipFile.isValidZipFile()) {
+                throw new FileToolException("压缩文件无效");
+            }
+
+            // 检查入口文件是否存在
+            List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+            Boolean flag = false;
+            for (FileHeader header : fileHeaders) {
+                if (header.getFileName().equals(entryFilename)) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                throw new FileToolException("入口文件不存在");
+            }
+
+            // 解压缩文件
+            zipFile.extractAll(outputDir);
+        } catch (ZipException e) {
+            throw new FileToolException("文件解压失败");
+        }
     }
 }
