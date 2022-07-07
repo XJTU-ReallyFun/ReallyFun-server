@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+mapper跟标签：维护多有的SQL语句的
+    insert:标签
+    delete:标签
+    update:标签
+    select:标签
+    以上这四个标签对应的是数据库的增删改查操作语句
+namespace：用来映射SQL语句，即表示哪一个接口和当前的XMl文件进行映射
+-->
+<mapper namespace="com.reallyfun.server.mapper.FeedbackMapper">
+    <!-- insert标签表示一个插入操作 -->
+    <!-- id属性：用来表示当前的这个SQL语句映射的是UserMapper的哪个方法，
+                id的取值是对应的方法的名称。
+         useGeneratedKeys属性：表示开启主键自增
+         keyProperty属性：表示当前表中哪一个字段是主键
+         注意：在配置文件中SQL语句不能使用分号。
+    -->
+    <insert id="submitFeedback" useGeneratedKeys="true">
+        insert into t_feedback
+        ( game_id, category, content )
+        values (
+                #{gameId}, #{category}, #{content}
+               )
+    </insert>
+    <select id="findById" resultType="com.reallyfun.server.entity.Feedback">
+        select *
+        from t_feedback
+        where id = #{id}
+    </select>
+    <update id="handleFeedback">
+        update t_feedback set handle_comment = #{handleComment} where id = #{id}
+    </update>
+</mapper>
