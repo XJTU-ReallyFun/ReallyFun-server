@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC  "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.reallyfun.server.mapper.HistoryMapper">
+    <!--
+    <resultMap id="UserEntityMap" type="com.reallyfun.server.mapper.HistoryMapper">
+        <id column =
+    </resultMap>
+    -->
+    <!--更新游戏时长：Integer uprecord(Integer game_id) -->
+    <update id="update">
+        UPDATE t_history
+        SET total_time=#{totalTime}+1,
+            last_monent=#{lastMonent},
+            modified_user = #{modifiedUser},
+            modified_time = #{modifiedTime}
+        WHERE user_id= #{userId} AND game_id=#{gameId}
+    </update>
+
+    <select id="findByUserid"  resultType="com.reallyfun.server.entity.History">
+        SELECT *
+        FROM t_history
+        WHERE user_id=#{userId}
+    </select>
+
+
+
+    <insert id="insert">
+        INSERT INTO t_history(user_id,game_id,total_time,last_monent,created_user,
+                              created_time,modified_user,modified_time)
+        VALUES (#{userId},#{gameId},#{totalTime},#{lastMonent},#{createdUser},
+                #{createdTime},#{modifiedUser},#{modifiedTime})
+    </insert>
+</mapper>

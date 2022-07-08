@@ -146,4 +146,37 @@ public class UserServiceImpl implements IUserService {
         String encrypted = encryptPassword(password, salt);
         return encrypted.equals(hash);
     }
+
+    /**
+     * 根据用户ID更改对应用户头像文件名
+     *
+     * @param id     用户ID
+     * @param avatar 头像文件名
+     */
+    @Override
+    public void updateAvatar(Integer id, String avatar) {
+        // 构造用户数据
+        User user = new User();
+        user.setId(id);
+        user.setAvatar(avatar);
+        user.modifiedBy(id);
+
+        // 更改头像文件名并判断是否成功
+        Integer result = userMapper.updateAvatarById(user);
+        if (result != 1) {
+            throw new UserException("头像修改失败");
+        }
+    }
+
+    /**
+     * 根据用户ID获取头像文件名
+     *
+     * @param id 用户ID
+     * @return 头像文件名
+     */
+    @Override
+    public String getAvatarById(Integer id) {
+        User user = userMapper.findUserById(id);
+        return user.getAvatar();
+    }
 }
