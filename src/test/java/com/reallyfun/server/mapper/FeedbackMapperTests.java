@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 @SpringBootTest
 public class FeedbackMapperTests {
     @Autowired(required = false)
@@ -30,5 +32,14 @@ public class FeedbackMapperTests {
         String handleComment = "说得对";
         Integer rows = feedbackMapper.handleFeedback(id,handleComment);
         System.out.println("rows=" + rows);
+    }
+    @Test
+    public void findByUid() {
+        Integer userId = 1;
+        List<Feedback> list = feedbackMapper.findByUid(userId);
+        System.out.println("count=" + list.size());
+        for (Feedback item : list) {
+            System.out.println(item);
+        }
     }
 }

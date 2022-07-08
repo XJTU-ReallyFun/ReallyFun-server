@@ -9,7 +9,9 @@ import com.reallyfun.server.service.ex.UpdateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class FeedbackServiceImpl implements IFeedbackService {
@@ -40,5 +42,19 @@ public class FeedbackServiceImpl implements IFeedbackService {
             throw new UpdateException("处理反馈时出现未知错误，请联系系统管理员");
         }
 
+    }
+    @Override
+    public List<Feedback> getFeedback(Integer pageSize, Integer pageNum, Integer userId) {
+        List<Feedback> list = feedbackMapper.findByUid(userId);
+        List<Feedback> list1 = new ArrayList<>();
+        if (list.isEmpty()) {
+            throw new FeedbackNotFoundException("反馈不存在");
+        }
+        for (Integer item = pageNum*(pageSize - 1); item < pageNum*pageSize; item++ )
+        {
+            Feedback f = list.get(item);
+            list1.add(f);
+        }
+        return list1;
     }
 }

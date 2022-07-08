@@ -38,15 +38,9 @@ public class TagServiceTests {
     @Test
     public void bindGameTag() {
         try {
-            Date now = new Date();
-            RelGameTag relgametag = new RelGameTag();
-            relgametag.setGameId(1);
-            relgametag.setTagId(1);
-            relgametag.setModifiedTime(now);
-            relgametag.setModifiedUser(1);
-            relgametag.setCreatedTime(now);
-            relgametag.setCreatedUser(1);
-            iTagService.bindGameTag(relgametag);
+            Integer gameId = 1;
+            Integer tagId = 2;
+            iTagService.bindGameTag(gameId,tagId);
             System.out.println("绑定成功！");
         } catch (ServiceException e) {
             System.out.println("绑定失败！" + e.getClass().getSimpleName());

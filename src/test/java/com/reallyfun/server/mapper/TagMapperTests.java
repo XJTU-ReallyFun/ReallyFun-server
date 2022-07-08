@@ -27,15 +27,9 @@ public class TagMapperTests {
     }
     @Test
     public void bindGameTag(){
-        Date now = new Date();
-        RelGameTag relgametag = new RelGameTag();
-        relgametag.setGameId(1);
-        relgametag.setTagId(1);
-        relgametag.setModifiedTime(now);
-        relgametag.setModifiedUser(1);
-        relgametag.setCreatedTime(now);
-        relgametag.setCreatedUser(1);
-        Integer rows = tagMapper.bindGameTag(relgametag);
+        Integer gameId = 1;
+        Integer tagId = 2;
+        Integer rows = tagMapper.bindGameTag(gameId, tagId);
         System.out.println("rows=" + rows);
     }
     @Test

@@ -38,16 +38,9 @@ public class TagServiceImpl implements ITagService {
         }
     }
     @Override
-    public void bindGameTag(RelGameTag relgametag){
-        // 创建当前时间对象
-        Date now = new Date();
-        // 补全数据：4项⽇志属性
-        relgametag.setCreatedUser(1);
-        relgametag.setCreatedTime(now);
-        relgametag.setModifiedUser(1);
-        relgametag.setModifiedTime(now);
+    public void bindGameTag(Integer gameId, Integer tagId){
 
-        Integer rows = tagMapper.bindGameTag(relgametag);
+        Integer rows = tagMapper.bindGameTag(gameId, tagId);
         if (rows != 1) {
             // 是：插⼊数据时出现某种错误，则抛出InsertException异常
             throw new InsertException("添加绑定关系出现未知错误，请联系系统管理员");
