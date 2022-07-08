@@ -20,14 +20,16 @@ public interface TagMapper {
 
     /**
      * 绑定关系
-     * @param relgametag
+     * @param gameId
+     * @param tagId
      * @return 受影响的行数
      */
-    Integer bindGameTag(RelGameTag relgametag);
+    Integer bindGameTag(Integer gameId, Integer tagId);
 
     /**
      * 解除绑定关系
-     * @param gameId,tagId
+     * @param gameId
+     * @param tagId
      * @return 受影响的行数
      */
     Integer unbindGameTag(Integer gameId, Integer tagId);

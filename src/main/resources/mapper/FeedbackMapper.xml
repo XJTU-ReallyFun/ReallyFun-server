@@ -34,4 +34,9 @@ namespace：用来映射SQL语句，即表示哪一个接口和当前的XMl文�
     <update id="handleFeedback">
         update t_feedback set handle_comment = #{handleComment} where id = #{id}
     </update>
+    <select id="findByUid" resultType="com.reallyfun.server.entity.Feedback">
+    select *
+    from t_feedback
+    where user_id = #{userId}
+    </select>
 </mapper>
