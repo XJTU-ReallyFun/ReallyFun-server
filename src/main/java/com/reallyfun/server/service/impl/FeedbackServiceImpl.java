@@ -29,6 +29,20 @@ public class FeedbackServiceImpl implements IFeedbackService {
         }
     }
     @Override
+    public void deleteFeedback(Integer id) {
+        Feedback feedback = feedbackMapper.findById(id);
+        // 检查查询结果是否为null
+        if (feedback == null) {
+            // 是：抛出UserNotFoundException异常
+            throw new FeedbackNotFoundException("数据不存在");
+        }
+        Integer rows = feedbackMapper.deleteFeedback(id);
+        if (rows != 1) {
+            // 是：抛出UpdateException异常
+            throw new UpdateException("删除反馈时出现未知错误，请联系系统管理员");
+        }
+    }
+    @Override
     public void handleFeedback(Integer id, String handleComment) {
         Feedback feedback = feedbackMapper.findById(id);
         // 检查查询结果是否为null

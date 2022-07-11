@@ -22,9 +22,15 @@ public class FeedbackMapperTests {
     }
     @Test
     public void findById() {
-        Integer id = 5;
+        Integer id = 10;
         Feedback feedback = feedbackMapper.findById(id);
         System.out.println(feedback);
+    }
+    @Test
+    public void deleteFeedback() {
+        Integer id = 10;
+        Integer rows = feedbackMapper.deleteFeedback(id);
+        System.out.println("rows=" + rows);
     }
     @Test
     public void handleFeedback() {

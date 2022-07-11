@@ -21,6 +21,13 @@ public class FeedbackController {
         // 响应成功
         return ResponseResult.getResponseResult("提交成功");
     }
+    @DeleteMapping("{id}")
+    public ResponseResult<Void> deleteFeedback(@PathVariable Integer id) {
+        // 调⽤业务对象执⾏注册
+        feedbackService.deleteFeedback(id);
+        // 响应成功
+        return ResponseResult.getResponseResult("删除成功");
+    }
     @PostMapping("handle")
     public ResponseResult<Void> handleFeedback (Integer id, String handleComment) {
         feedbackService.handleFeedback(id, handleComment);

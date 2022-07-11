@@ -14,6 +14,11 @@ public interface FeedbackMapper {
     Integer submitFeedback(Integer gameId, String category, String content);
     /**
      * @param id
+     * @return 受影响的函数
+     */
+    Integer deleteFeedback(Integer id);
+    /**
+     * @param id
      * return 匹配到的用户数据
      */
     Feedback findById(Integer id);

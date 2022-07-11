@@ -28,6 +28,17 @@ public class FeedbackServiceTests {
         }
     }
     @Test
+    public void deleteFeedback() {
+        try {
+            Integer id = 11;
+            iFeedbackService.deleteFeedback(id);
+            System.out.println("删除成功");
+        } catch (ServiceException e) {
+            System.out.println("添加失败！" + e.getClass().getSimpleName());
+            System.out.println(e.getMessage());
+        }
+    }
+    @Test
     public void handleFeedback() {
         try {
             Integer id = 6;

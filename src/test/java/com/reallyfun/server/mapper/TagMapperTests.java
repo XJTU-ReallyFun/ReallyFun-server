@@ -1,12 +1,9 @@
 package com.reallyfun.server.mapper;
 
-import com.reallyfun.server.entity.RelGameTag;
-import com.reallyfun.server.entity.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Date;
 
 @SpringBootTest
 public class TagMapperTests {

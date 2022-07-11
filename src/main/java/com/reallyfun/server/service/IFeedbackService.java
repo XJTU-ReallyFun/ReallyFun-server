@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface IFeedbackService {
     void submitFeedback(Integer gameId, String category, String content);
+    void deleteFeedback(Integer id);
     void handleFeedback(Integer id,String handleComment);
     List<Feedback> getFeedback(Integer pageSize, Integer pageNum, Integer userId);
 }

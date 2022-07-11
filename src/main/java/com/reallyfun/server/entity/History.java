@@ -1,12 +1,12 @@
 package com.reallyfun.server.entity;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 public class History extends BaseEntity {
     private Integer userId;
     private Integer gameId;
     private Integer totalTime;
-    private Timestamp lastMonent;
+    private Date lastMonent;
 
     public Integer getUserId() {
         return userId;
@@ -32,11 +32,11 @@ public class History extends BaseEntity {
         this.totalTime = totalTime;
     }
 
-    public Timestamp getLastMonent() {
+    public Date getLastMonent() {
         return lastMonent;
     }
 
-    public void setLastMonent(Timestamp lastMonent) {
+    public void setLastMonent(Date lastMonent) {
         this.lastMonent = lastMonent;
     }
 

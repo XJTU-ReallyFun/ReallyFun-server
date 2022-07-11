@@ -31,6 +31,10 @@ namespace：用来映射SQL语句，即表示哪一个接口和当前的XMl文�
         from t_feedback
         where id = #{id}
     </select>
+    <delete id="deleteFeedback">
+        delete from t_feedback
+        where id = #{id}
+    </delete>
     <update id="handleFeedback">
         update t_feedback set handle_comment = #{handleComment} where id = #{id}
     </update>
