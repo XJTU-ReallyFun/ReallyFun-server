@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.reallyfun.server.mapper.IGameMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_game (id, user_id, title, intro, tutorial, entry, bundle, thumb, is_hidden, rating, moment,
+                            created_user, created_time, modified_user, modified_time)
+        VALUES (#{id}, #{userId}, #{title}, #{intro}, #{tutorial},
+                #{entry}, #{bundle}, #{thumb}, #{isHidden}, #{rating}, #{moment},
+                #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE
+        FROM t_game
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateById">
+        UPDATE t_game
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="intro != null">
+                intro = #{intro},
+            </if>
+            <if test="tutorial != null">
+                tutorial = #{tutorial},
+            </if>
+            <if test="entry != null">
+                entry = #{entry},
+            </if>
+            <if test="bundle != null">
+                bundle = #{bundle},
+            </if>
+            <if test="thumb != null">
+                thumb = #{thumb},
+            </if>
+            <if test="isHidden != null">
+                is_hidden = #{isHidden},
+            </if>
+            <if test="rating != null">
+                rating = #{rating}
+            </if>
+            <if test="moment != null">
+                moment = #{moment}
+            </if>
+            modified_user = #{modifiedUser},
+            modified_time = #{modifiedTime}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateRatingById">
+        UPDATE t_game
+        SET rating = (SELECT AVG(rating)
+                      FROM t_rating
+                      WHERE game_id = t_game.id)
+        WHERE id = #{id}
+    </update>
+
+    <select id="existByTitle" resultType="Integer">
+        SELECT 1
+        FROM t_game
+        WHERE title = #{title} LIMIT 1
+    </select>
+
+    <select id="findById" resultType="com.reallyfun.server.entity.Game">
+        SELECT *
+        FROM t_game
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAllGameOfRange" resultType="com.reallyfun.server.entity.Game">
+        SELECT *
+        FROM t_game
+        <where>
+            is_hidden = FALSE
+            <if test="search != null">
+                <bind name="pattern" value="'%' + search + '%'"/>
+                AND title LIKE #{pattern}
+            </if>
+            <if test="tagId != null">
+                AND EXISTS
+                (SELECT *
+                FROM t_rel_game_tag
+                WHERE game_id = t_game.id
+                AND tag_id = #{tagId})
+            </if>
+        </where>
+        <if test="key != null">
+            ORDER BY
+            <choose>
+                <when test="key == 'rating'">
+                    rating <if test="order">DESC</if>,
+                </when>
+                <when test="key == 'moment'">
+                    moment <if test="order">DESC</if>,
+                </when>
+            </choose>
+            title
+        </if>
+        LIMIT #{offset}, #{limit}
+    </select>
+
+
+    <!-- 插⼊数据：Integer insert(Example example) -->
+    <!--    <insert id="insert" useGeneratedKeys="true" keyProperty="eid">-->
+    <!--        INSERT INTO t_example (eid, eint, estr,-->
+    <!--                               created_user, created_time, modified_user, modified_time)-->
+    <!--        VALUES (#{eid}, #{eint}, #{estr},-->
+    <!--                #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})-->
+    <!--    </insert>-->
+    <!-- 根据eid删除数据：Example deleteByEid(Integer eid) -->
+    <!--    <delete id="deleteByEid">-->
+    <!--        DELETE-->
+    <!--        FROM t_example-->
+    <!--        WHERE eid = #{eid}-->
+    <!--    </delete>-->
+    <!-- 根据eid更改数据：Integer UpdateEstrByEid(
+        @Param("eid") String eid,
+        @Param("estr") String estr) -->
+    <!--    <update id="updateEstrByEid">-->
+    <!--        UPDATE-->
+    <!--            t_example-->
+    <!--        SET estr          = #{dstEstr},-->
+    <!--            modified_user = #{example.modifiedUser},-->
+    <!--            modified_time = #{example.modifiedTime}-->
+    <!--        WHERE eid = #{example.eid}-->
+    <!--    </update>-->
+    <!-- 根据eid查询数据：Example findByEid(String eid) -->
+    <!--    <select id="findByEid" resultType="com.reallyfun.server.entity.Example">-->
+    <!--        SELECT *-->
+    <!--        FROM t_example-->
+    <!--        WHERE eid = #{eid}-->
+    <!--    </select>-->
+</mapper>

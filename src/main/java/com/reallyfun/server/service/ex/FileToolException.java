@@ -1,6 +1,8 @@
 package com.reallyfun.server.service.ex;
 
-public class FileToolException extends ServiceException {
+import java.io.IOException;
+
+public class FileToolException extends IOException {
     public FileToolException() {
     }
 
@@ -14,9 +16,5 @@ public class FileToolException extends ServiceException {
 
     public FileToolException(Throwable cause) {
         super(cause);
-    }
-
-    public FileToolException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }
