@@ -2,29 +2,50 @@ package com.reallyfun.server.mapper;
 
 import com.reallyfun.server.entity.Favorite;
 
+import java.util.List;
+
 public interface IFavoriteMapper {
     /**
-     * 收藏游戏
+     * 添加收藏
      *
      * @param favorite 收藏游戏内容
      * @return 受影响行数
      */
-    Integer insertFavorite(Favorite favorite);
+    Integer insert(Favorite favorite);
 
     /**
-     * 通过id检查用户是否已经收藏过该游戏
+     * 删除某用户的游戏收藏
      *
-     * @param gameId 游戏id
-     * @param userId 游戏id
-     * @return 返回favorite对象，若为空，则可以进行收藏
+     * @param gameId 游戏ID
+     * @param userId 用户ID
+     * @return 受影响的行数
      */
-    Favorite findById(Integer gameId, Integer userId);
+    Integer deleteFavoriteByIds(Integer gameId, Integer userId);
 
     /**
-     * 删除收藏游戏
+     * 判断用户是否收藏了某游戏
      *
-     * @param favorite 收藏的对应游戏
-     * @return 受影响行数
+     * @param gameId 游戏ID
+     * @param userId 用户ID
+     * @return 用户是否收藏了该游戏
      */
-    Integer deleteFavorite(Favorite favorite);
+    Integer existByIds(Integer gameId, Integer userId);
+
+    /**
+     * 获取范围内某用户的游戏收藏
+     *
+     * @param userId 用户ID
+     * @param offset 偏移量
+     * @param limit  记录条数
+     * @return 该范围内用户的游戏收藏
+     */
+    List<Favorite> findAllFavoriteByUserIdOfRange(Integer userId, Integer offset, Integer limit);
+
+    /**
+     * 获取某游戏的收藏人数
+     *
+     * @param gameId 游戏ID
+     * @return 该游戏的收藏人数
+     */
+    Integer countFavoriteByGameId(Integer gameId);
 }

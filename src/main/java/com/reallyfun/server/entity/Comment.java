@@ -1,15 +1,23 @@
 package com.reallyfun.server.entity;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 public class Comment extends BaseEntity {
     private Integer id;
     private Integer userId;
     private Integer gameId;
     private String content;
-    private Timestamp moment;
+    private Date moment;
     private Integer directReplyId;
     private Integer rootReplyId;
+    private Integer likeCount;
+    private Integer replyCount;
+
+    private String userName;
+    private String userAvatar;
+    private Integer replyUserId;
+    private String replyUserName;
+    private Boolean isLiked;
 
     public Integer getId() {
         return id;
@@ -43,11 +51,11 @@ public class Comment extends BaseEntity {
         this.content = content;
     }
 
-    public Timestamp getMoment() {
+    public Date getMoment() {
         return moment;
     }
 
-    public void setMoment(Timestamp moment) {
+    public void setMoment(Date moment) {
         this.moment = moment;
     }
 
@@ -67,6 +75,62 @@ public class Comment extends BaseEntity {
         this.rootReplyId = rootReplyId;
     }
 
+    public Integer getLikeCount() {
+        return likeCount;
+    }
+
+    public Integer getReplyCount() {
+        return replyCount;
+    }
+
+    public void setReplyCount(Integer replyCount) {
+        this.replyCount = replyCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserAvatar() {
+        return userAvatar;
+    }
+
+    public void setUserAvatar(String userAvatar) {
+        this.userAvatar = userAvatar;
+    }
+
+    public Integer getReplyUserId() {
+        return replyUserId;
+    }
+
+    public void setReplyUserId(Integer replyUserId) {
+        this.replyUserId = replyUserId;
+    }
+
+    public String getReplyUserName() {
+        return replyUserName;
+    }
+
+    public void setReplyUserName(String replyUserName) {
+        this.replyUserName = replyUserName;
+    }
+
+    public Boolean getLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(Boolean liked) {
+        isLiked = liked;
+    }
+
     @Override
     public String toString() {
         return "Comment{" +
@@ -77,6 +141,13 @@ public class Comment extends BaseEntity {
                 ", moment=" + moment +
                 ", directReplyId=" + directReplyId +
                 ", rootReplyId=" + rootReplyId +
+                ", likeCount=" + likeCount +
+                ", replyCount=" + replyCount +
+                ", userName='" + userName + '\'' +
+                ", userAvatar='" + userAvatar + '\'' +
+                ", replyUserId=" + replyUserId +
+                ", replyUserName='" + replyUserName + '\'' +
+                ", isLiked=" + isLiked +
                 '}';
     }
 }

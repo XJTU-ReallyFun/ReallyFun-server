@@ -5,6 +5,7 @@ import com.reallyfun.server.mapper.IUserMapper;
 import com.reallyfun.server.service.IUserService;
 import com.reallyfun.server.service.ex.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -19,13 +20,9 @@ public class UserServiceImpl implements IUserService {
     @Autowired(required = false)
     private IUserMapper userMapper;
 
-    /**
-     * 用户注册
-     *
-     * @param name     用户姓名
-     * @param password 用户密码明文
-     * @param email    用户邮箱地址
-     */
+    @Value("${user.avatar.default-url}")
+    private String defaultAvatarURL;
+
     @Override
     public void register(String name, String password, String email) {
         // 格式检查
@@ -43,6 +40,7 @@ public class UserServiceImpl implements IUserService {
         if (userMapper.findUserByName(name) != null) {
             throw new UserException("用户名已存在");
         }
+        // TODO: 判断邮箱是否重复
 
         // 密码加密
         String salt = UUID.randomUUID().toString().toLowerCase();
@@ -54,8 +52,7 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(encryptedPassword);
         user.setSalt(salt);
         user.setEmail(email);
-        // TODO: 使用配置文件设置默认/随机头像地址
-        user.setAvatar("https://avatar.com/default");
+        user.setAvatar(defaultAvatarURL);
         user.setAuth(0);
         user.createBy(-1);
 
@@ -110,13 +107,7 @@ public class UserServiceImpl implements IUserService {
         return encrypted;
     }
 
-    /**
-     * 用户登录
-     *
-     * @param name     用户名
-     * @param password 密码明文
-     * @return 若登录成功则返回用户信息，否则抛出错误
-     */
+
     @Override
     public User login(String name, String password) {
         // 根据用户名查询用户信息
@@ -147,12 +138,7 @@ public class UserServiceImpl implements IUserService {
         return encrypted.equals(hash);
     }
 
-    /**
-     * 根据用户ID更改对应用户头像文件名
-     *
-     * @param id     用户ID
-     * @param avatar 头像文件名
-     */
+
     @Override
     public void updateAvatar(Integer id, String avatar) {
         // 构造用户数据
@@ -162,21 +148,110 @@ public class UserServiceImpl implements IUserService {
         user.modifiedBy(id);
 
         // 更改头像文件名并判断是否成功
-        Integer result = userMapper.updateAvatarById(user);
+        Integer result = userMapper.updateById(user);
         if (result != 1) {
             throw new UserException("头像修改失败");
         }
     }
 
-    /**
-     * 根据用户ID获取头像文件名
-     *
-     * @param id 用户ID
-     * @return 头像文件名
-     */
     @Override
     public String getAvatarById(Integer id) {
         User user = userMapper.findUserById(id);
         return user.getAvatar();
+    }
+
+    @Override
+    public User findById(Integer id) {
+        User user = userMapper.findUserById(id);
+        return user;
+    }
+
+    @Override
+    public void updatePassword(Integer id, String oldPassword, String newPassword) {
+        // 格式检查
+        if (oldPassword.equals(newPassword)) {
+            throw new UserException("新密码不可与原密码相同");
+        }
+        if (!isValidPassword(newPassword)) {
+            throw new UserException("新密码格式有误");
+        }
+
+        // 获取用户对象
+        User user = userMapper.findUserById(id);
+
+        // 验证原密码
+        if (!verifyPassword(oldPassword, user.getPassword(), user.getSalt())) {
+            throw new UserException("原密码错误");
+        }
+
+        // 密码加密
+        String salt = UUID.randomUUID().toString().toLowerCase();
+        String encryptedPassword = encryptPassword(newPassword, salt);
+
+        // 构造用户数据
+        User userData = new User();
+        userData.setId(id);
+        userData.setPassword(encryptedPassword);
+        userData.setSalt(salt);
+        userData.modifiedBy(id);
+
+        // 更新并检查是否成功
+        Integer result = userMapper.updateById(userData);
+        if (result != 1) {
+            throw new UserException("密码修改失败");
+        }
+    }
+
+    @Override
+    public void updateName(Integer id, String name) {
+        // 格式检查
+        if (!isValidName(name)) {
+            throw new UserException("用户名格式有误");
+        }
+
+        // 重复检查
+        if (userMapper.findUserByName(name) != null) {
+            throw new UserException("用户名已存在");
+        }
+
+        // 构造用户数据
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
+        user.modifiedBy(id);
+
+        // 更新并检查是否成功
+        Integer result = userMapper.updateById(user);
+        if (result != 1) {
+            throw new UserException("用户名修改失败");
+        }
+    }
+
+    @Override
+    public void updateAuth(Integer id, Integer dstAuth, Integer userId, Integer auth) {
+        // 获取用户对象
+        User user = userMapper.findUserById(id);
+
+        // 判断是否有修改用户权限的权限
+        if (auth <= user.getAuth()) {
+            throw new UserException("您无权修改该用户的权限");
+        }
+
+        // 判断目标权限值是否有效
+        if (auth <= dstAuth) {
+            throw new UserException("目标权限值无效");
+        }
+
+        // 构造用户数据
+        User userData = new User();
+        userData.setId(id);
+        userData.setAuth(dstAuth);
+        userData.modifiedBy(userId);
+
+        // 更新并判断是否成功
+        Integer result = userMapper.updateById(userData);
+        if (result != 1) {
+            throw new UserException("权限修改失败");
+        }
     }
 }

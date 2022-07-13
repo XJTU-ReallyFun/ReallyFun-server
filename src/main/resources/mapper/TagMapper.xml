@@ -2,50 +2,51 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<!--
-mapper跟标签：维护多有的SQL语句的
-    insert:标签
-    delete:标签
-    update:标签
-    select:标签
-    以上这四个标签对应的是数据库的增删改查操作语句
-namespace：用来映射SQL语句，即表示哪一个接口和当前的XMl文件进行映射
--->
-<mapper namespace="com.reallyfun.server.mapper.TagMapper">
-    <!-- insert标签表示一个插入操作 -->
-    <!-- id属性：用来表示当前的这个SQL语句映射的是UserMapper的哪个方法，
-                id的取值是对应的方法的名称。
-         useGeneratedKeys属性：表示开启主键自增
-         keyProperty属性：表示当前表中哪一个字段是主键
-         注意：在配置文件中SQL语句不能使用分号。
-    -->
-    <insert id="insertTag" useGeneratedKeys="true">
-        insert into t_tag
-        (
-            content
-        )
-        values
-        (
-            #{content}
-        )
+<mapper namespace="com.reallyfun.server.mapper.ITagMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_tag (id, content,
+                           created_user, created_time, modified_user, modified_time)
+        VALUES (#{id}, #{content},
+                #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})
     </insert>
 
-    <delete id="deleteTag" >
-        delete from t_tag where id = #{id}
+    <delete id="deleteById">
+        DELETE
+        FROM t_tag
+        WHERE id = #{id}
     </delete>
 
-    <insert id="bindGameTag" useGeneratedKeys="true" keyProperty="gameId, tagId">
-        insert into t_rel_game_tag
-        (
-             game_id,tag_id
-        )
-        values
-        (
-             #{gameId},#{tagId}
-        )
+    <select id="existById" resultType="Integer">
+        SELECT 1
+        FROM t_tag
+        WHERE id = #{id} LIMIT 1
+    </select>
+
+    <select id="existByContent" resultType="Integer">
+        SELECT 1
+        FROM t_tag
+        WHERE content = #{content} LIMIT 1
+    </select>
+
+    <insert id="insertRel">
+        INSERT INTO t_rel_game_tag (game_id, tag_id,
+                                    created_user, created_time, modified_user, modified_time)
+        VALUES (#{gameId}, #{tagId},
+                #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})
     </insert>
 
-    <delete id="unbindGameTag">
-        delete from t_rel_game_tag where game_id = #{gameId} and tag_id = #{tagId}
+    <delete id="deleteRelByIds">
+        DELETE
+        FROM t_rel_game_tag
+        WHERE game_id = #{gameId}
+          AND tag_id = #{tagId}
     </delete>
+
+    <select id="existRelByIds" resultType="Integer">
+        SELECT 1
+        FROM t_rel_game_tag
+        WHERE game_id = #{gameId}
+          AND tag_id = #{tagId} LIMIT 1
+    </select>
 </mapper>

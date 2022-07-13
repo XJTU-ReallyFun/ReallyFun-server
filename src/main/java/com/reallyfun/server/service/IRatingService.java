@@ -1,12 +1,12 @@
 package com.reallyfun.server.service;
 
-import com.reallyfun.server.entity.Rating;
-
 public interface IRatingService {
     /**
-     * @param gameid 游戏id
-     * @param userid 用户id
-     * @param value  评分
+     * 用户对游戏进行评分
+     *
+     * @param gameId 游戏ID
+     * @param userId 用户ID
+     * @param value  评分值
      */
-    void evaluate(Integer gameid, Integer userid, Integer value);
+    void rate(Integer gameId, Integer userId, Integer value);
 }

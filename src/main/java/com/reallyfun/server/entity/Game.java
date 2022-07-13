@@ -1,5 +1,7 @@
 package com.reallyfun.server.entity;
 
+import java.util.Date;
+
 public class Game extends BaseEntity {
     private Integer id;
     private Integer userId;
@@ -7,10 +9,11 @@ public class Game extends BaseEntity {
     private String intro;
     private String tutorial;
     private String entry;
-    private String source;
+    private String bundle;
     private String thumb;
     private Boolean isHidden;
     private Double rating;
+    private Date moment;
 
     public Integer getId() {
         return id;
@@ -60,12 +63,12 @@ public class Game extends BaseEntity {
         this.entry = entry;
     }
 
-    public String getSource() {
-        return source;
+    public String getBundle() {
+        return bundle;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setBundle(String bundle) {
+        this.bundle = bundle;
     }
 
     public String getThumb() {
@@ -76,12 +79,12 @@ public class Game extends BaseEntity {
         this.thumb = thumb;
     }
 
-    public Boolean getHidden() {
+    public Boolean getIsHidden() {
         return isHidden;
     }
 
-    public void setHidden(Boolean hidden) {
-        isHidden = hidden;
+    public void setIsHidden(Boolean isHidden) {
+        this.isHidden = isHidden;
     }
 
     public Double getRating() {
@@ -90,6 +93,14 @@ public class Game extends BaseEntity {
 
     public void setRating(Double rating) {
         this.rating = rating;
+    }
+
+    public Date getMoment() {
+        return moment;
+    }
+
+    public void setMoment(Date moment) {
+        this.moment = moment;
     }
 
     @Override
@@ -101,10 +112,11 @@ public class Game extends BaseEntity {
                 ", intro='" + intro + '\'' +
                 ", tutorial='" + tutorial + '\'' +
                 ", entry='" + entry + '\'' +
-                ", source='" + source + '\'' +
+                ", bundle='" + bundle + '\'' +
                 ", thumb='" + thumb + '\'' +
                 ", isHidden=" + isHidden +
                 ", rating=" + rating +
+                ", moment=" + moment +
                 '}';
     }
 }

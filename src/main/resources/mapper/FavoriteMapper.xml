@@ -3,24 +3,37 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.reallyfun.server.mapper.IFavoriteMapper">
-    <!-- 向评分表添加评分 -->
-    <insert id="insertFavorite">
-        INSERT INTO t_favorite
-        (game_id, user_id, created_user, created_time, modified_user, modified_time)
-        VALUES (#{gameId}, #{userId}, #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})
+    <insert id="insert">
+        INSERT INTO t_favorite (game_id, user_id,
+                                created_user, created_time, modified_user, modified_time)
+        VALUES (#{gameId}, #{userId},
+                #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})
     </insert>
 
-    <select id="findById" resultType="com.reallyfun.server.entity.Favorite">
-        SELECT *
-        FROM t_favorite
-        WHERE game_id = #{gameId}
-          and user_id = #{userId}
-    </select>
-
-    <delete id="deleteFavorite">
+    <delete id="deleteFavoriteByIds">
         DELETE
         FROM t_favorite
         WHERE user_id = #{userId}
           and game_id = #{gameId}
     </delete>
+
+    <select id="existByIds" resultType="Integer">
+        SELECT 1
+        FROM t_favorite
+        WHERE game_id = #{gameId}
+          and user_id = #{userId} LIMIT 1
+    </select>
+
+    <select id="findAllFavoriteByUserIdOfRange" resultType="com.reallyfun.server.entity.Favorite">
+        SELECT *
+        FROM t_favorite
+        WHERE user_id = #{userId} LIMIT #{offset}
+            , ${limit}
+    </select>
+
+    <select id="countFavoriteByGameId" resultType="Integer">
+        SELECT COUNT(*)
+        FROM t_favorite
+        WHERE game_id = #{gameId}
+    </select>
 </mapper>

@@ -30,6 +30,14 @@ public class BaseController {
             responseResult = ResponseResult.getResponseResult(4003, e.getMessage());
         } else if (e instanceof FavoriteException) {
             responseResult = ResponseResult.getResponseResult(4004, e.getMessage());
+        } else if (e instanceof FeedbackException) {
+            responseResult = ResponseResult.getResponseResult(4005, e.getMessage());
+        } else if (e instanceof TagException) {
+            responseResult = ResponseResult.getResponseResult(4006, e.getMessage());
+        } else if (e instanceof GameException) {
+            responseResult = ResponseResult.getResponseResult(4007, e.getMessage());
+        } else if (e instanceof CommentException) {
+            responseResult = ResponseResult.getResponseResult(4008, e.getMessage());
         } else {
             responseResult = ResponseResult.getResponseResult(1000, "未知错误");
         }

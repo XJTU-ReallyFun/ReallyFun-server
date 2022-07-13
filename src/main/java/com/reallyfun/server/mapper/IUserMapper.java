@@ -39,10 +39,10 @@ public interface IUserMapper {
     User findUserByName(String name);
 
     /**
-     * 根据用户ID更改对应用户头像文件名
+     * 根据用户ID更改对应非空字段
      *
      * @param user 用户对象
      * @return 受影响的行数
      */
-    Integer updateAvatarById(User user);
+    Integer updateById(User user);
 }

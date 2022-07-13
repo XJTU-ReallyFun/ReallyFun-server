@@ -1,6 +1,7 @@
 package com.reallyfun.server.util;
 
 import com.reallyfun.server.service.ex.FileToolException;
+import com.reallyfun.server.service.ex.UserException;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
@@ -9,21 +10,40 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 文件操作的工具类
  */
 public class FileTool {
     /**
-     * 上传文件
+     * 根据原文件名随机生成带原有后缀的文件名
      *
-     * @param file      待传文件
-     * @param uploadDir 文件存储目录
-     * @param filename  文件名
-     * @param maxSize   文件大小上限（字节）
-     * @param types     支持的文件类型
+     * @param file 文件对象
+     * @return 生成的文件名
      */
-    public static void uploadFile(MultipartFile file, String uploadDir, String filename, Integer maxSize, List<String> types) {
+    public static String randomFileName(MultipartFile file)
+            throws FileToolException {
+        String originalFilename = file.getOriginalFilename();
+        int beginIndex = originalFilename.lastIndexOf(".");
+        if (beginIndex == -1) {
+            throw new FileToolException("文件名没有后缀");
+        }
+        String suffix = originalFilename.substring(beginIndex);
+        String filename = UUID.randomUUID().toString() + suffix;
+        return filename;
+    }
+
+    /**
+     * 检查文件基本信息
+     *
+     * @param file    文件对象
+     * @param maxSize 文件大小上限（字节）
+     * @param types   支持的文件类型
+     * @throws FileToolException
+     */
+    public static void checkFile(MultipartFile file, Integer maxSize, List<String> types)
+            throws FileToolException {
         // 判断文件是否为空
         if (file.isEmpty()) {
             throw new FileToolException("上传的文件不允许为空");
@@ -39,6 +59,22 @@ public class FileTool {
         if (!types.contains(fileType)) {
             throw new FileToolException("上传的文件类型不支持");
         }
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param file      待传文件
+     * @param uploadDir 文件存储目录
+     * @param filename  文件名
+     * @param maxSize   文件大小上限（字节）
+     * @param types     支持的文件类型
+     * @throws FileToolException
+     */
+    public static void uploadFile(MultipartFile file, String uploadDir, String filename, Integer maxSize, List<String> types)
+            throws FileToolException {
+        // 检查文件基本信息
+        checkFile(file, maxSize, types);
 
         // 若目标路径不存在则创建它
         File dir = new File(uploadDir);
@@ -63,8 +99,11 @@ public class FileTool {
      *
      * @param dir      文件所在目录
      * @param filename 文件名
+     * @return 是否删除成功
+     * @throws FileToolException
      */
-    public static Boolean deleteFile(String dir, String filename) {
+    public static Boolean deleteFile(String dir, String filename)
+            throws FileToolException {
         File file = new File(dir, filename);
 
         // 若文件不存在则返回
@@ -90,13 +129,14 @@ public class FileTool {
      * @param filename      待解压文件名
      * @param outputDir     解压目录
      * @param entryFilename 入口文件名
+     * @throws FileToolException
      */
     public static void checkEntryFileAndUnzip(
             String dir,
             String filename,
             String outputDir,
             String entryFilename
-    ) {
+    ) throws FileToolException {
         File file = new File(dir, filename);
 
         // 若文件不存在则返回

@@ -2,57 +2,100 @@ package com.reallyfun.server.service.impl;
 
 import com.reallyfun.server.entity.RelGameTag;
 import com.reallyfun.server.entity.Tag;
-import com.reallyfun.server.mapper.TagMapper;
+import com.reallyfun.server.mapper.IGameMapper;
+import com.reallyfun.server.mapper.ITagMapper;
 import com.reallyfun.server.service.ITagService;
-import com.reallyfun.server.service.ex.InsertException;
+import com.reallyfun.server.service.ex.TagException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-
-
+/**
+ * 处理标签数据的业务层实现类
+ */
 @Service
 public class TagServiceImpl implements ITagService {
-    @Autowired
-    private TagMapper tagMapper;
+    @Autowired(required = false)
+    private ITagMapper tagMapper;
+
+    @Autowired(required = false)
+    private IGameMapper gameMapper;
+
+    private static final Integer MAX_CONTENT_LENGTH = 20;
 
     @Override
-    public void insertTag(String content){
-        // 表示⽤户名没有被占⽤，则允许注册
-        // 调⽤持久层Integer insert(User user)⽅法，执⾏注册并获取返回值(受影响的⾏数)
-        Integer rows = tagMapper.insertTag(content);
-        // 判断受影响的⾏数是否不为1
-        if (rows != 1) {
-            // 是：插⼊数据时出现某种错误，则抛出InsertException异常
-            throw new InsertException("添加标签数据出现未知错误，请联系系统管理员");
+    public void insert(String content, Integer userId) {
+        // 限制标签内容字数
+        if (content.length() < 1 || MAX_CONTENT_LENGTH < content.length()) {
+            throw new TagException("标签内容字数有误");
         }
-    }
-    @Override
-    public void deleteTag(Integer id){
-        // 调⽤持久层Integer insert(User user)⽅法，执⾏注册并获取返回值(受影响的⾏数)
-        Integer rows = tagMapper.deleteTag(id);
-        // 判断受影响的⾏数是否不为1
-        if (rows != 1) {
-            // 是：插⼊数据时出现某种错误，则抛出InsertException异常
-            throw new InsertException("删除标签数据出现未知错误，请联系系统管理员");
-        }
-    }
-    @Override
-    public void bindGameTag(Integer gameId, Integer tagId){
 
-        Integer rows = tagMapper.bindGameTag(gameId, tagId);
-        if (rows != 1) {
-            // 是：插⼊数据时出现某种错误，则抛出InsertException异常
-            throw new InsertException("添加绑定关系出现未知错误，请联系系统管理员");
+        // 不允许相同内容的标签存在
+        if (tagMapper.existByContent(content) != null) {
+            throw new TagException("标签内容已存在");
+        }
+
+        // 构造标签数据
+        Tag tagData = new Tag();
+        tagData.setContent(content);
+        tagData.createBy(userId);
+
+        // 插入并判断是否成功
+        Integer result = tagMapper.insert(tagData);
+        if (result != 1) {
+            throw new TagException("标签创建失败");
         }
     }
+
     @Override
-    public void unbindGameTag(Integer gameId, Integer tagId){
-        Integer rows = tagMapper.unbindGameTag(gameId, tagId);
-        // 判断受影响的⾏数是否不为1
-        if (rows != 1) {
-            // 是：插⼊数据时出现某种错误，则抛出InsertException异常
-            throw new InsertException("删除绑定关系出现未知错误，请联系系统管理员");
+    public void delete(Integer id) {
+        // 删除并判断是否成功
+        Integer result = tagMapper.deleteById(id);
+        if (result != 1) {
+            throw new TagException("标签删除失败");
+        }
+    }
+
+    @Override
+    public void bind(Integer gameId, Integer tagId, Integer userId) {
+        // 判断游戏是否存在
+        if (gameMapper.findById(gameId) == null) {
+            throw new TagException("游戏不存在");
+        }
+
+        // 判断标签是否存在
+        if (tagMapper.existById(tagId) == null) {
+            throw new TagException("标签不存在");
+        }
+
+        // 判断是否已经绑定过
+        if (tagMapper.existRelByIds(gameId, tagId) != null) {
+            throw new TagException("标签已经绑定");
+        }
+
+        // 构造游戏-标签关系数据
+        RelGameTag rel = new RelGameTag();
+        rel.setGameId(gameId);
+        rel.setTagId(tagId);
+        rel.createBy(userId);
+
+        // 插入并判断是否成功
+        Integer result = tagMapper.insertRel(rel);
+        if (result != 1) {
+            throw new TagException("绑定失败");
+        }
+    }
+
+    @Override
+    public void unbind(Integer gameId, Integer tagId) {
+        // 判断绑定关系是否存在
+        if (tagMapper.existRelByIds(gameId, tagId) == null) {
+            throw new TagException("绑定关系不存在");
+        }
+
+        // 解绑并判断是否成功
+        Integer result = tagMapper.deleteRelByIds(gameId, tagId);
+        if (result != 1) {
+            throw new TagException("解绑失败");
         }
     }
 }

@@ -28,12 +28,30 @@
         WHERE name = #{name}
     </select>
 
-    <update id="updateAvatarById">
-        UPDATE
-            t_user
-        SET avatar        = #{avatar},
+    <update id="updateById">
+        UPDATE t_user
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="salt != null">
+                salt = #{salt},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+            <if test="auth != null">
+                auth = #{auth},
+            </if>
             modified_user = #{modifiedUser},
             modified_time = #{modifiedTime}
+        </set>
         WHERE id = #{id}
     </update>
 
