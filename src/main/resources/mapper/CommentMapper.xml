@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.reallyfun.server.mapper.ICommentMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_comment (id, user_id, game_id, content, moment,
+                               direct_reply_id, root_reply_id, like_count, reply_count,
+                               created_user, created_time, modified_user, modified_time)
+        VALUES (#{id}, #{userId}, #{gameId}, #{content}, #{moment},
+                #{directReplyId}, #{rootReplyId}, #{likeCount}, #{replyCount},
+                #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE
+        FROM t_comment
+        WHERE id = #{id}
+    </delete>
+
+    <insert id="insertLike">
+        INSERT INTO t_like (user_id, comment_id,
+                            created_user, created_time, modified_user, modified_time)
+        VALUES (#{userId}, #{commentId},
+                #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})
+    </insert>
+
+    <delete id="deleteLikeByIds">
+        DELETE
+        FROM t_like
+        WHERE user_id = #{userId}
+          AND comment_id = #{commentId}
+    </delete>
+
+    <update id="updateLikeCountById">
+        UPDATE t_comment
+        SET like_count = (SELECT COUNT(*)
+                          FROM t_like
+                          WHERE comment_id = id)
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateReplyCountById">
+        UPDATE t_comment AS c1
+        SET reply_count = (SELECT COUNT(*)
+                           FROM t_comment AS c2
+                           WHERE c2.root_reply_id = c1.id)
+        WHERE id = #{id}
+    </update>
+
+    <select id="findById" resultType="com.reallyfun.server.entity.Comment">
+        SELECT *
+        FROM t_comment
+        WHERE id = #{id}
+    </select>
+
+    <resultMap id="commentMap" type="com.reallyfun.server.entity.Comment">
+        <id property="id" column="c_id"></id>
+        <result property="userId" column="user_id"></result>
+        <result property="userName" column="user_name"></result>
+        <result property="userAvatar" column="user_avatar"></result>
+        <result property="replyUserId" column="reply_user_id"></result>
+        <result property="replyUserName" column="reply_user_name"></result>
+        <result property="gameId" column="game_id"></result>
+        <result property="content" column="content"></result>
+        <result property="moment" column="moment"></result>
+        <result property="isLiked" column="is_liked"></result>
+        <result property="likeCount" column="like_count"></result>
+        <result property="replyCount" column="reply_count"></result>
+    </resultMap>
+
+    <sql id="commentSelect">
+        SELECT c.id AS c_id,
+        c.user_id AS user_id,
+        u.name AS user_name,
+        u.avatar AS user_avatar,
+        <if test="replyId != null">
+            ur.id AS reply_user_id,
+            ur.name AS reply_user_name,
+        </if>
+        c.game_id AS game_id,
+        c.content AS content,
+        c.moment AS moment,
+        <if test="myUserId != null">
+            IF(l.user_id IS NULL, FALSE, TRUE) AS is_liked,
+        </if>
+        c.like_count AS like_count,
+        c.reply_count AS reply_count
+    </sql>
+
+    <sql id="commentFrom">
+        FROM t_comment AS c
+        INNER JOIN t_user AS u ON c.user_id = u.id
+        <if test="replyId != null">
+            INNER JOIN t_comment AS cr ON c.direct_reply_id = cr.id
+            INNER JOIN t_user AS ur ON cr.user_id = ur.id
+        </if>
+        <if test="myUserId != null">
+            LEFT JOIN t_like AS l ON c.id = l.comment_id AND l.user_id = #{myUserId}
+        </if>
+    </sql>
+
+    <sql id="commentWhere">
+        <where>
+            <if test="userId != null">AND c.user_id = #{userId}</if>
+            <if test="gameId != null">AND c.game_id = #{gameId}</if>
+            <if test="replyId != null">AND c.root_reply_id = #{replyId}</if>
+            <if test="isRoot">AND c.direct_reply_id IS NULL</if>
+        </where>
+    </sql>
+
+    <sql id="commentOrderBy">
+        ORDER BY
+        <choose>
+            <when test="key == 'like'">
+                c.like_count <if test="order">DESC</if>,
+            </when>
+            <when test="key == 'moment'">
+                c.moment <if test="order">DESC</if>,
+            </when>
+        </choose>
+        c.id
+    </sql>
+
+    <select id="findAllOfRange" resultMap="commentMap">
+        <include refid="commentSelect"></include>
+        <include refid="commentFrom"></include>
+        <include refid="commentWhere"></include>
+        <include refid="commentOrderBy"></include>
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="count" resultType="Integer">
+        SELECT COUNT(*)
+        <include refid="commentFrom"></include>
+        <include refid="commentWhere"></include>
+    </select>
+
+    <select id="existLikeByIds" resultType="Integer">
+        SELECT 1
+        FROM t_like
+        WHERE user_id = #{userId}
+          AND comment_id = #{commentId} LIMIT 1
+    </select>
+
+    <!-- 插⼊数据：Integer insert(Example example) -->
+    <!--    <insert id="insert" useGeneratedKeys="true" keyProperty="eid">-->
+    <!--        INSERT INTO t_example (eid, eint, estr,-->
+    <!--                               created_user, created_time, modified_user, modified_time)-->
+    <!--        VALUES (#{eid}, #{eint}, #{estr},-->
+    <!--                #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})-->
+    <!--    </insert>-->
+    <!-- 根据eid删除数据：Example deleteByEid(Integer eid) -->
+    <!--    <delete id="deleteByEid">-->
+    <!--        DELETE-->
+    <!--        FROM t_example-->
+    <!--        WHERE eid = #{eid}-->
+    <!--    </delete>-->
+    <!-- 根据eid更改数据：Integer UpdateEstrByEid(
+        @Param("eid") String eid,
+        @Param("estr") String estr) -->
+    <!--    <update id="updateEstrByEid">-->
+    <!--        UPDATE-->
+    <!--            t_example-->
+    <!--        SET estr          = #{dstEstr},-->
+    <!--            modified_user = #{example.modifiedUser},-->
+    <!--            modified_time = #{example.modifiedTime}-->
+    <!--        WHERE eid = #{example.eid}-->
+    <!--    </update>-->
+    <!-- 根据eid查询数据：Example findByEid(String eid) -->
+    <!--    <select id="findByEid" resultType="com.reallyfun.server.entity.Example">-->
+    <!--        SELECT *-->
+    <!--        FROM t_example-->
+    <!--        WHERE eid = #{eid}-->
+    <!--    </select>-->
+</mapper>
