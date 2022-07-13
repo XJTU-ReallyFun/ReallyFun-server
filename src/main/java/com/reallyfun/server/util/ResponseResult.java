@@ -11,7 +11,7 @@ public class ResponseResult<E> implements Serializable {
     /**
      * 操作成功的状态码
      */
-    public static final int OK = 200;
+    public static final int OK = 0;
     /**
      * 状态码
      */
