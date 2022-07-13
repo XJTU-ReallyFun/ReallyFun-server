@@ -1,42 +1,38 @@
 package com.reallyfun.server.mapper;
 
-import com.reallyfun.server.entity.RelGameTag;
-import com.reallyfun.server.entity.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Date;
-
 @SpringBootTest
 public class TagMapperTests {
     @Autowired(required = false)
-    private TagMapper tagMapper;
+    private ITagMapper tagMapper;
 
     @Test
     public void insertTag(){
-        String content = "动作";
-        Integer rows = tagMapper.insertTag(content);
-        System.out.println("rows=" + rows);
+//        String content = "动作";
+//        Integer rows = tagMapper.insertTag(content);
+//        System.out.println("rows=" + rows);
     }
     @Test
     public void deleteTag(){
-        Integer id = 14;
-        Integer rows = tagMapper.deleteTag(id);
-        System.out.println("rows=" + rows);
+//        Integer id = 14;
+//        Integer rows = tagMapper.deleteTag(id);
+//        System.out.println("rows=" + rows);
     }
     @Test
     public void bindGameTag(){
-        Integer gameId = 1;
-        Integer tagId = 2;
-        Integer rows = tagMapper.bindGameTag(gameId, tagId);
-        System.out.println("rows=" + rows);
+//        Integer gameId = 1;
+//        Integer tagId = 2;
+//        Integer rows = tagMapper.bind(gameId, tagId);
+//        System.out.println("rows=" + rows);
     }
     @Test
     public void unbindGameTag(){
-        Integer gameId = 1;
-        Integer tagId = 1;
-        Integer rows = tagMapper.unbindGameTag(gameId,tagId);
-        System.out.println("rows=" + rows);
+//        Integer gameId = 1;
+//        Integer tagId = 1;
+//        Integer rows = tagMapper.unbind(gameId,tagId);
+//        System.out.println("rows=" + rows);
     }
 }
