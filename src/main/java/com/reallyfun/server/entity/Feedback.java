@@ -4,7 +4,7 @@ public class Feedback extends BaseEntity {
     private Integer id;
     private Integer userId;
     private Integer gameId;
-    private String category;
+    private Integer category;
     private String content;
     private Integer handlerId;
     private String handleComment;
@@ -33,11 +33,11 @@ public class Feedback extends BaseEntity {
         this.gameId = gameId;
     }
 
-    public String getCategory() {
+    public Integer getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Integer category) {
         this.category = category;
     }
 
@@ -71,7 +71,7 @@ public class Feedback extends BaseEntity {
                 "id=" + id +
                 ", userId=" + userId +
                 ", gameId=" + gameId +
-                ", category='" + category + '\'' +
+                ", category=" + category +
                 ", content='" + content + '\'' +
                 ", handlerId=" + handlerId +
                 ", handleComment='" + handleComment + '\'' +

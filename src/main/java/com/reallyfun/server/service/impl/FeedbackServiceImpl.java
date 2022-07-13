@@ -1,60 +1,133 @@
 package com.reallyfun.server.service.impl;
 
 import com.reallyfun.server.entity.Feedback;
-import com.reallyfun.server.mapper.FeedbackMapper;
+import com.reallyfun.server.mapper.IFeedbackMapper;
+import com.reallyfun.server.mapper.IGameMapper;
 import com.reallyfun.server.service.IFeedbackService;
-import com.reallyfun.server.service.ex.FeedbackNotFoundException;
-import com.reallyfun.server.service.ex.InsertException;
-import com.reallyfun.server.service.ex.UpdateException;
+import com.reallyfun.server.service.ex.FeedbackException;
+import com.reallyfun.server.service.ex.TagException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class FeedbackServiceImpl implements IFeedbackService {
-    @Autowired
-    private FeedbackMapper feedbackMapper;
+    @Autowired(required = false)
+    private IFeedbackMapper feedbackMapper;
+
+    @Autowired(required = false)
+    private IGameMapper gameMapper;
+
+    private static final Integer MAX_CONTENT_LENGTH = 200;
+    private static final Integer MAX_HANDLE_COMMENT_LENGTH = 200;
+    private static final Integer MAX_CATEGORY_VALUE = 5;
 
     @Override
-    public void submitFeedback(Integer gameId, String category, String content) {
-        // 调⽤持久层Integer insert(User user)⽅法，执⾏注册并获取返回值(受影响的⾏数)
-        Integer rows = feedbackMapper.submitFeedback(gameId,category,content);
-        // 判断受影响的⾏数是否不为1
-        if (rows != 1) {
-            // 是：插⼊数据时出现某种错误，则抛出InsertException异常
-            throw new InsertException("添加⽤户数据出现未知错误，请联系系统管理员");
+    public void insert(Integer userId, Integer gameId, Integer category, String content) {
+        // 判断游戏是否存在
+        if (gameMapper.findById(gameId) == null) {
+            throw new TagException("游戏不存在");
+        }
+
+        // 判断是否为合法category
+        if (category < 0 || MAX_CATEGORY_VALUE < category) {
+            throw new FeedbackException("无效的反馈分类");
+        }
+
+        // 判断content字数是否合法
+        if (content.isEmpty() || MAX_CONTENT_LENGTH < content.length()) {
+            throw new FeedbackException("反馈内容字数不符合要求");
+        }
+
+        // 构造反馈数据
+        Feedback feedback = new Feedback();
+        feedback.setUserId(userId);
+        feedback.setGameId(gameId);
+        feedback.setCategory(category);
+        feedback.setContent(content);
+        feedback.createBy(userId);
+
+        // 插入并判断是否成功
+        Integer result = feedbackMapper.insert(feedback);
+        if (result != 1) {
+            throw new FeedbackException("反馈失败");
         }
     }
+
     @Override
-    public void handleFeedback(Integer id, String handleComment) {
+    public void delete(Integer id, Integer userId) {
+        // 判断反馈是否存在
         Feedback feedback = feedbackMapper.findById(id);
-        // 检查查询结果是否为null
         if (feedback == null) {
-            // 是：抛出UserNotFoundException异常
-            throw new FeedbackNotFoundException("数据不存在");
-        }
-        Integer rows = feedbackMapper.handleFeedback(id,handleComment);
-        if (rows != 1) {
-            // 是：抛出UpdateException异常
-            throw new UpdateException("处理反馈时出现未知错误，请联系系统管理员");
+            throw new FeedbackException("反馈不存在");
         }
 
+        // 判断是否为当前用户提交的反馈
+        if (!feedback.getUserId().equals(userId)) {
+            throw new FeedbackException("您无权撤销该反馈");
+        }
+
+        // 判断是否已被处理
+        if (feedback.getHandlerId() != null) {
+            throw new FeedbackException("无法撤销已处理的反馈");
+        }
+
+        // 删除并判断是否成功
+        Integer result = feedbackMapper.deleteById(id);
+        if (result != 1) {
+            throw new FeedbackException("反馈撤销失败");
+        }
     }
+
     @Override
-    public List<Feedback> getFeedback(Integer pageSize, Integer pageNum, Integer userId) {
-        List<Feedback> list = feedbackMapper.findByUid(userId);
-        List<Feedback> list1 = new ArrayList<>();
-        if (list.isEmpty()) {
-            throw new FeedbackNotFoundException("反馈不存在");
+    public void handle(Integer id, Integer handlerId, String handleComment) {
+        // 判断反馈是否存在
+        Feedback feedback = feedbackMapper.findById(id);
+        if (feedback == null) {
+            throw new FeedbackException("反馈不存在");
         }
-        for (Integer item = pageNum*(pageSize - 1); item < pageNum*pageSize; item++ )
-        {
-            Feedback f = list.get(item);
-            list1.add(f);
+
+        // 判断反馈是否已被处理
+        if (feedback.getHandlerId() != null) {
+            throw new FeedbackException("反馈已被处理");
         }
-        return list1;
+
+        // 判断handleComment字数是否合法
+        if (handleComment.isEmpty() || handleComment.length() > MAX_HANDLE_COMMENT_LENGTH) {
+            throw new FeedbackException("反馈意见字数不符合要求");
+        }
+
+        // 构造反馈数据
+        feedback.setHandlerId(handlerId);
+        feedback.setHandleComment(handleComment);
+        feedback.modifiedBy(handlerId);
+
+        // 处理反馈并判断是否成功
+        Integer result = feedbackMapper.updateHandleInfoById(feedback);
+        if (result != 1) {
+            throw new FeedbackException("反馈处理失败");
+        }
+    }
+
+    @Override
+    public List<Feedback> findAllFeedbackOfPage(
+            Integer userId,
+            Integer gameId,
+            Integer category,
+            Boolean isHandled,
+            Integer pageSize,
+            Integer pageNum
+    ) {
+        // 限定查询范围
+        Integer size = Math.min(Math.max(pageSize, 1), 100);
+        Integer num = Math.max(pageNum, 1);
+
+        // 查询并返回数据
+        List<Feedback> result = feedbackMapper.findAllFeedbackOfRange(
+                userId, gameId, category, isHandled, size * (num - 1), size
+        );
+        return result;
     }
 }
