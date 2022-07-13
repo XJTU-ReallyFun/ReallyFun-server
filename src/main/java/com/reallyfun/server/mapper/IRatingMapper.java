@@ -5,19 +5,19 @@ import com.reallyfun.server.entity.Rating;
 public interface IRatingMapper {
 
     /**
-     * 插入数据
+     * 插入评分数据
      *
-     * @param rating 评分类
-     * @return 影响行数
+     * @param rating 评分实体对象
+     * @return 受到影响的行数
      */
-    Integer insertRating(Rating rating);
+    Integer insert(Rating rating);
 
     /**
-     *判断用户是否对同一游戏进行评价
+     * 判断用户是否对游戏进行过评分
      *
-     * @param gameId 游戏id
-     * @param userId 用户id
-     * @return 返回该用户是否评分过
+     * @param gameId 游戏ID
+     * @param userId 用户ID
+     * @return 若过评分则返回1，否则返回null
      */
-    Rating findByGameId(Integer gameId,Integer userId);
+    Integer existByIds(Integer gameId, Integer userId);
 }

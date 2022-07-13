@@ -1,39 +1,53 @@
 package com.reallyfun.server.service.impl;
 
 import com.reallyfun.server.entity.Rating;
-import com.reallyfun.server.entity.User;
+import com.reallyfun.server.mapper.IGameMapper;
 import com.reallyfun.server.mapper.IRatingMapper;
-import com.reallyfun.server.mapper.IUserMapper;
 import com.reallyfun.server.service.IRatingService;
-import com.reallyfun.server.service.IUserService;
 import com.reallyfun.server.service.ex.RatingException;
+import com.reallyfun.server.service.ex.TagException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 @Service
 public class RatingServiceImpl implements IRatingService {
 
-    @Autowired
-    private IRatingMapper iRatingMapper;
+    @Autowired(required = false)
+    private IRatingMapper ratingMapper;
 
-    public void evaluate(Integer gameid, Integer userid, Integer value) {
-        if (value < 0 || value > 5) {
-            throw new RatingException("对不起，请重新评分");
+    @Autowired(required = false)
+    private IGameMapper gameMapper;
+
+    public void rate(Integer gameId, Integer userId, Integer value) {
+        // 判断评分值是否合法
+        if (value < 1 || 5 < value) {
+            throw new RatingException("无效的评分值");
         }
+
+        // 判断游戏是否存在
+        if (gameMapper.findById(gameId) == null) {
+            throw new TagException("游戏不存在");
+        }
+
+        // 判断用户是否对该游戏评分过
+        if (ratingMapper.existByIds(gameId, userId) != null) {
+            throw new RatingException("您已评分");
+        }
+
+        // 构造评分数据
         Rating rating = new Rating();
-        rating.setGameId(gameid);
-        rating.setUserId(userid);
+        rating.setGameId(gameId);
+        rating.setUserId(userId);
         rating.setRating(value);
-        if (iRatingMapper.findByGameId(gameid, userid) != null) {
-            throw new RatingException("抱歉，您已对该游戏进行评价过");
-        }
-        rating.createBy(userid);
-        Integer row = iRatingMapper.insertRating(rating);
-        if (row != 1) {
-            throw new RatingException("添加游戏评分出现未知错误，请重试");
-        }
-    }
+        rating.createBy(userId);
 
+        // 插入并判断是否成功
+        Integer result = ratingMapper.insert(rating);
+        if (result != 1) {
+            throw new RatingException("评分失败");
+        }
+
+        // 更新游戏评分缓存
+        gameMapper.updateRatingById(gameId);
+    }
 }
